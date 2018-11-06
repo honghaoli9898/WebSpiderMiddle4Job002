@@ -1,7 +1,13 @@
 package com.tl.job002.ui;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.tl.job002.pojos.UrlTaskPojo;
+import com.tl.job002.utils.IOUtil;
 import com.tl.job002.utils.StaticValue;
 
 /**
@@ -10,13 +16,35 @@ import com.tl.job002.utils.StaticValue;
  * @date 2018年11月6日
  */
 public class UIManager {
-	public String getRootUrlByDirect(){
-		return "http://news.youth.cn/gn/";
+	public static Logger looger=Logger.getLogger(UIManager.class);
+	public static UrlTaskPojo getRootUrlByDirect(){
+		return new UrlTaskPojo("中国青年网-国内新闻","http://news.youth.cn/gn/");
 	}
-	public String getRootUrlByStaticValue(){
-		return StaticValue.rootUrl;
+	public static UrlTaskPojo getRootUrlByStaticValue(){
+		return new UrlTaskPojo(StaticValue.rootTitle,StaticValue.rootUrl);
 	}
-	public List<String> getRootUrlBySeedFileForClassPath(String fileName){
-		return null;
+	public static List<UrlTaskPojo> getRootUrlBySeedFileForClassPath(String filePath,boolean isClassPath) throws Exception{
+		List<String> lineList=IOUtil.readFileToList(filePath, isClassPath, StaticValue.defaultENCODING);
+		List<UrlTaskPojo> resultTaskPojo=new ArrayList<UrlTaskPojo>();
+		for (String line : lineList) {
+			line=line.trim();
+			if(line.length()>0 && !line.startsWith("#")){
+				String[] columnArray=line.split("\\s");
+				if(columnArray.length==2){
+					UrlTaskPojo tempPojo=new UrlTaskPojo(columnArray[0].trim(),columnArray[1].trim());
+					resultTaskPojo.add(tempPojo);
+				}
+				else{
+					looger.error("错误行为:"+line);
+					throw new Exception("存在不规范行,请检查!");
+				}
+			}
+		}
+		return resultTaskPojo;
+	}
+	public static void main(String[] args) throws Exception {
+		String dataFilePath="seed.txt";
+		List<UrlTaskPojo> resultTaskPojo=UIManager.getRootUrlBySeedFileForClassPath(dataFilePath, false);
+		System.out.println(resultTaskPojo);
 	}
 }
