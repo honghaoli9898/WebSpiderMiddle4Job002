@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.tl.job002.pojos.UrlTaskPojo;
+import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.utils.IOUtil;
 import com.tl.job002.utils.StaticValue;
 
@@ -41,6 +42,11 @@ public class UIManager {
 			}
 		}
 		return resultTaskPojo;
+	}
+	public static void addSeedUrlsToTaskSchedule() throws Exception{
+		String dataFilePath="seed.txt";
+		List<UrlTaskPojo> seedUrlPojoList=UIManager.getRootUrlBySeedFileForClassPath(dataFilePath, false);
+		TaskScheduleManager.addUrlPojoList(seedUrlPojoList);
 	}
 	public static void main(String[] args) throws Exception {
 		String dataFilePath="seed.txt";
