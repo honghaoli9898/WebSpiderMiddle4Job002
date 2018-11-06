@@ -1,6 +1,8 @@
 package com.tl.job002.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,7 +16,7 @@ public class IOUtil {
 			is = ReadConfigUtil.class.getClassLoader().getResourceAsStream(filePath);
 		}
 		else{
-			
+			is=new FileInputStream(filePath);
 		}
 		InputStreamReader isr = new InputStreamReader(is, charset);
 		BufferedReader br = new BufferedReader(isr);
