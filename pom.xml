@@ -13,6 +13,13 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!--httpcline-4.5.2依赖 -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
 		<!-- 引入 hadoop-cli-2.7.4 依赖 -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>

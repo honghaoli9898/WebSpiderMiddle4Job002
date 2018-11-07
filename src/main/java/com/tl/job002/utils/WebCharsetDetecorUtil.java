@@ -2,11 +2,15 @@ package com.tl.job002.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
 public class WebCharsetDetecorUtil {
 	public static String regex = "charset=[\"]?([\\s\\S]*?)\"?\\s?/?[\">]";
@@ -45,13 +49,39 @@ public class WebCharsetDetecorUtil {
 						break;
 					}
 				} else if (line.contains("</head>")) {
-					//如果到了</head>还没找到就不用找了
+					// 如果到了</head>还没找到就不用找了
 					break;
 				}
 			}
 			br.close();
 		}
 		return findCharset == null ? StaticValue.defaultENCODING : findCharset;
+	}
+
+	public static String getCharset(HttpEntity entity, String defaultCharset)
+			throws UnsupportedOperationException, IOException {
+		String findCharset = null;
+		findCharset = EntityUtils.getContentCharSet(entity);
+		if (findCharset == null) {
+			byte[] contextByteArray = IOUtil.convertInputStreamToByteArray(entity.getContent());
+			String htmlSource = new String(contextByteArray, defaultCharset);
+			StringReader sr = new StringReader(htmlSource);
+			BufferedReader br = new BufferedReader(sr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				line = line.trim().toLowerCase();
+				if (line.contains("<meta")) {
+					findCharset = RegexUtil.getMatchText(line, regex, 1);
+					if (findCharset != null) {
+						break;
+					}
+				} else if (line.contains("</head>")) {
+					break;
+				}
+			}
+			br.close();
+		}
+		return findCharset == null ? defaultCharset : findCharset;
 	}
 
 	public static void main(String[] args) throws IOException {

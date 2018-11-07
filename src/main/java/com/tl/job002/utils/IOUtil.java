@@ -1,6 +1,7 @@
 package com.tl.job002.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,5 +40,14 @@ public class IOUtil {
 		URL urlObj=new URL(url);
 		URLConnection urlconnection=urlObj.openConnection();
 		return getBR(urlconnection,charset);
+	}
+	public static byte[] convertInputStreamToByteArray(InputStream is) throws IOException{
+		byte[] byteBuffer = new byte[4096];
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		int readLength=0;
+		while((readLength=is.read(byteBuffer))!=-1){
+			bos.write(byteBuffer,0,readLength);
+		}
+		return bos.toByteArray();
 	}
 }
