@@ -1,11 +1,12 @@
 package com.tl.job002.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,5 +28,16 @@ public class IOUtil {
 		}
 		br.close();
 		return lineList;
+	}
+	public static BufferedReader getBR(URLConnection urlConnection,String charSet) throws IOException{
+		InputStream is = urlConnection.getInputStream();
+		InputStreamReader isr = new InputStreamReader(is,charSet);
+		BufferedReader br =new BufferedReader(isr);
+		return br;
+	}
+	public static BufferedReader getBR(String url,String charset) throws IOException{
+		URL urlObj=new URL(url);
+		URLConnection urlconnection=urlObj.openConnection();
+		return getBR(urlconnection,charset);
 	}
 }
