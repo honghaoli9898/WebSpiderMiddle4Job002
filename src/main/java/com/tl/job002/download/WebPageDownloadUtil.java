@@ -2,29 +2,26 @@ package com.tl.job002.download;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 
 import com.tl.job002.utils.IOUtil;
 import com.tl.job002.utils.StaticValue;
 import com.tl.job002.utils.WebCharsetDetecorUtil;
 
 /**
- * ÓÃÓÚÏÂÔØ¸ø¶¨ÈÎÒâÍøÖ·¶ÔÓ¦µÄhtml´úÂë
+ * ç”¨äºŽä¸‹è½½ç»™å®šä»»æ„ç½‘å€å¯¹åº”çš„htmlä»£ç 
+ * 
  * @author lihonghao
- * @date 2018Äê11ÔÂ6ÈÕ
+ * @date 2018å¹´11æœˆ6æ—¥
  */
 public class WebPageDownloadUtil {
-	public static String download(String url) throws IOException{
-		String charset=WebCharsetDetecorUtil.getCharset(url);
-		BufferedReader br=IOUtil.getBR(url, charset);
-		StringBuilder stringBuilder=new StringBuilder();
-		String line=null;
-		int lineCounter=0;
-		while((line=br.readLine())!=null){
-			if(lineCounter>0){
+	public static String download(String url) throws IOException {
+		String charset = WebCharsetDetecorUtil.getCharset(url);
+		BufferedReader br = IOUtil.getBR(url, charset);
+		StringBuilder stringBuilder = new StringBuilder();
+		String line = null;
+		int lineCounter = 0;
+		while ((line = br.readLine()) != null) {
+			if (lineCounter > 0) {
 				stringBuilder.append(StaticValue.sep_next_line);
 			}
 			stringBuilder.append(line);
@@ -32,11 +29,5 @@ public class WebPageDownloadUtil {
 		}
 		br.close();
 		return stringBuilder.toString();
-	}
-	public static void main(String[] args) throws IOException {
-		String url="http://news.youth.cn/gn/";
-//		String url= "https://www.baidu.com/";
-//		String url= "https://www.sina.com.cn";
-		
 	}
 }

@@ -4,10 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ÕıÔòÆ¥Åä¹¤¾ßÀà
- * 
+ * æ­£åˆ™åŒ¹é…å·¥å…·ç±»
  * @author lihonghao
- * @date 2018Äê11ÔÂ7ÈÕ
+ * @date 2018å¹´11æœˆ7æ—¥
  */
 public class RegexUtil {
 	public static String getMatchText(String input, String regex, int groupNum) {
