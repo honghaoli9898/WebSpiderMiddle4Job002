@@ -1,4 +1,4 @@
-package com.tl.job002.utils;
+package com.tl.job002.download;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +12,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import com.tl.job002.iface.download.DownloadInterface;
+import com.tl.job002.utils.IOUtil;
+import com.tl.job002.utils.RegexUtil;
+import com.tl.job002.utils.StaticValue;
+import com.tl.job002.utils.WebCharsetDetecorUtil;
 
 public class WebpageDownloadUtil4HttpClient implements DownloadInterface{
+	@SuppressWarnings("deprecation")
 	public static String parseEntity(HttpEntity entity, String defaultCharset) throws IOException {
 		String findCharset = null;
 		String htmlSource = null;

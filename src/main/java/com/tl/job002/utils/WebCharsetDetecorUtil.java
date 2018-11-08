@@ -15,16 +15,12 @@ import org.apache.http.util.EntityUtils;
 public class WebCharsetDetecorUtil {
 	public static String regex = "charset=[\"]?([\\s\\S]*?)\"?\\s?/?[\">]";
 
-	public static String getCharset(String url) throws IOException {
-		URL urlObj = new URL(url);
-		URLConnection urlconnection = urlObj.openConnection();
-		Map<String, List<String>> headerMap = urlconnection.getHeaderFields();
+	public static String getCharsetByHttpHeader(URLConnection urlConnection) {
+		Map<String, List<String>> headerMap = urlConnection.getHeaderFields();
 		Set<String> keySet = headerMap.keySet();
 		String findCharset = null;
-		boolean isFindContentType = false;
 		for (String key : keySet) {
 			if (key != null && key.equalsIgnoreCase("Content-Type")) {
-				isFindContentType = true;
 				List<String> valueList = headerMap.get(key);
 				String line = valueList.get(0);
 				String[] valueArray = line.split(StaticValue.sep_semicolon);
@@ -34,13 +30,39 @@ public class WebCharsetDetecorUtil {
 					valueArray = charsetString.split(StaticValue.sep_equales);
 					if (valueArray.length == 2) {
 						findCharset = valueArray[1].trim();
+						break;
 					}
 				}
 			}
-			if (isFindContentType) {
+		}
+		return findCharset;
+	}
+
+	public static String getCharsetByHtmlSource(String htmlSource) throws IOException {
+		StringReader sr = new StringReader(htmlSource);
+		BufferedReader br = new BufferedReader(sr);
+		String line = null;
+		String findCharset = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim().toLowerCase();
+			if (line.contains("<meta")) {
+				findCharset = RegexUtil.getMatchText(line, WebCharsetDetecorUtil.regex, 1);
+				if (findCharset != null) {
+					break;
+				}
+			} else if (line.contains("</head>")) {
 				break;
 			}
 		}
+		br.close();
+		return findCharset;
+	}
+
+	public static String getCharset(String url) throws IOException {
+		URL urlObj = new URL(url);
+		URLConnection urlconnection = urlObj.openConnection();
+		String findCharset = null;
+		findCharset = getCharsetByHttpHeader(urlconnection);
 		// 如果header里没找到就去meta里找
 		if (findCharset == null) {
 			BufferedReader br = IOUtil.getBR(urlconnection, StaticValue.defaultENCODING);
@@ -62,8 +84,9 @@ public class WebCharsetDetecorUtil {
 		return findCharset == null ? StaticValue.defaultENCODING : findCharset;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static String getCharset(HttpEntity entity, String defaultCharset)
-			throws UnsupportedOperationException, IOException {
+			throws IOException {
 		String findCharset = null;
 		findCharset = EntityUtils.getContentCharSet(entity);
 		if (findCharset == null) {

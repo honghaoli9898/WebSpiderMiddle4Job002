@@ -50,4 +50,9 @@ public class IOUtil {
 		}
 		return bos.toByteArray();
 	}
+	public static URLConnection getUrlConnection(String url) throws IOException{
+		URL urlObj = new URL(url);
+		URLConnection urlconnection = urlObj.openConnection();
+		return urlconnection;
+	}
 }
