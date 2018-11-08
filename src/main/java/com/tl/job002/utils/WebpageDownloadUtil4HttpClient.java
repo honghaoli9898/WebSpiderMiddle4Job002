@@ -1,5 +1,9 @@
 package com.tl.job002.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -7,31 +11,50 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-public class WebpageDownloadUtil4HttpClient {
-	public static void main(String[] args) throws Exception {
+import com.tl.job002.iface.download.DownloadInterface;
+
+public class WebpageDownloadUtil4HttpClient implements DownloadInterface{
+	public static String parseEntity(HttpEntity entity, String defaultCharset) throws IOException {
+		String findCharset = null;
+		String htmlSource = null;
+		// 不管那个编码,这个字节数组都会运行,故先拿出来
+		byte[] contextByteArray = IOUtil.convertInputStreamToByteArray(entity.getContent());
+		findCharset = EntityUtils.getContentCharSet(entity);
+		if (findCharset == null) {
+			htmlSource = new String(contextByteArray, defaultCharset);
+			StringReader sr = new StringReader(htmlSource);
+			BufferedReader br = new BufferedReader(sr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				line = line.trim().toLowerCase();
+				if (line.contains("<meta")) {
+					findCharset = RegexUtil.getMatchText(line, WebCharsetDetecorUtil.regex, 1);
+					if (findCharset != null) {
+						break;
+					}
+				} else if (line.contains("</head>")) {
+					break;
+				}
+			}
+			br.close();
+		}
+		// 无论如何都滴有个编码
+		findCharset = (findCharset == null ? defaultCharset : findCharset);
+		if (htmlSource == null || findCharset != defaultCharset) {
+			htmlSource = new String(contextByteArray, findCharset);
+		}
+		return htmlSource;
+	}
+
+	public static String downloadStatic(String url) throws IOException {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
+		String htmlSource = null;
 		try {
-			HttpGet httpGet = new HttpGet("http://news.youth.cn/gn");
+			HttpGet httpGet = new HttpGet(url);
 			CloseableHttpResponse response1 = httpclient.execute(httpGet);
-			// The underlying HTTP connection is still held by the response
-			// object
-			// to allow the response content to be streamed directly from the
-			// network socket.
-			// In order to ensure correct deallocation of system resources
-			// the user MUST call CloseableHttpResponse#close() from a finally
-			// clause.
-			// Please note that if response content is not fully consumed the
-			// underlying
-			// connection cannot be safely re-used and will be shut down and
-			// discarded
-			// by the connection manager.
 			try {
-				System.out.println(response1.getStatusLine());
 				HttpEntity entity1 = response1.getEntity();
-				// do something useful with the response body
-				// and ensure it is fully consumed
-				String charset=WebCharsetDetecorUtil.getCharset(entity1, StaticValue.defaultENCODING);
-				System.out.println(charset);
+				htmlSource = parseEntity(entity1, StaticValue.defaultENCODING);
 				EntityUtils.consume(entity1);
 			} finally {
 				response1.close();
@@ -39,6 +62,26 @@ public class WebpageDownloadUtil4HttpClient {
 		} finally {
 			httpclient.close();
 		}
+		return htmlSource;
+	}
+	@Override
+	public String download(String url){
+		try {
+			return downloadStatic(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void main(String[] args) throws Exception {
+//		String url = "http://www.sohu.com";
+		String url = "http://news.youth.cn/gn";
+//		String url = "http://www.baidu.com";
+//		String url = "http://www.qq.com";
+//		String url = "http://www.163.com";
+		String htmlSource=downloadStatic(url);
+		System.out.println(htmlSource);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.tl.job002.download;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import com.tl.job002.iface.download.DownloadInterface;
 import com.tl.job002.utils.IOUtil;
 import com.tl.job002.utils.StaticValue;
 import com.tl.job002.utils.WebCharsetDetecorUtil;
@@ -13,8 +14,8 @@ import com.tl.job002.utils.WebCharsetDetecorUtil;
  * @author lihonghao
  * @date 2018年11月6日
  */
-public class WebPageDownloadUtil {
-	public static String download(String url) throws IOException {
+public class WebPageDownloadUtil implements DownloadInterface {
+	public static String downloadStatic(String url) throws IOException {
 		String charset = WebCharsetDetecorUtil.getCharset(url);
 		BufferedReader br = IOUtil.getBR(url, charset);
 		StringBuilder stringBuilder = new StringBuilder();
@@ -29,5 +30,15 @@ public class WebPageDownloadUtil {
 		}
 		br.close();
 		return stringBuilder.toString();
+	}
+
+	@Override
+	public String download(String url) {
+		try {
+			return downloadStatic(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -21,8 +21,10 @@ public class WebCharsetDetecorUtil {
 		Map<String, List<String>> headerMap = urlconnection.getHeaderFields();
 		Set<String> keySet = headerMap.keySet();
 		String findCharset = null;
+		boolean isFindContentType = false;
 		for (String key : keySet) {
 			if (key != null && key.equalsIgnoreCase("Content-Type")) {
+				isFindContentType = true;
 				List<String> valueList = headerMap.get(key);
 				String line = valueList.get(0);
 				String[] valueArray = line.split(StaticValue.sep_semicolon);
@@ -35,8 +37,11 @@ public class WebCharsetDetecorUtil {
 					}
 				}
 			}
+			if (isFindContentType) {
+				break;
+			}
 		}
-		// 如果findCharset在header当中没找到则在meta charset找
+		// 濡傛灉header閲屾病鎵惧埌灏卞幓meta閲屾壘
 		if (findCharset == null) {
 			BufferedReader br = IOUtil.getBR(urlconnection, StaticValue.defaultENCODING);
 			;
@@ -49,7 +54,6 @@ public class WebCharsetDetecorUtil {
 						break;
 					}
 				} else if (line.contains("</head>")) {
-					// 如果到了</head>还没找到就不用找了
 					break;
 				}
 			}
