@@ -1,12 +1,9 @@
-package com.tl.job002.download;
+package com.tl.job002.utils;
 
 import java.io.IOException;
 import java.net.URLConnection;
 
 import com.tl.job002.iface.download.DownloadInterface;
-import com.tl.job002.utils.IOUtil;
-import com.tl.job002.utils.StaticValue;
-import com.tl.job002.utils.WebCharsetDetecorUtil;
 
 /**
  * 用于下载给定任意网址对应的html代码
