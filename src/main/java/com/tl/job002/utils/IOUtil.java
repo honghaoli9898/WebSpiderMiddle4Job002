@@ -15,7 +15,7 @@ public class IOUtil {
 	public static List<String> readFileToList(String filePath,boolean isClassPath,String charset) throws IOException {
 		InputStream is=null;
 		if(isClassPath){
-			is = ReadConfigUtil.class.getClassLoader().getResourceAsStream(filePath);
+			is = IOUtil.class.getClassLoader().getResourceAsStream(filePath);
 		}
 		else{
 			is=new FileInputStream(filePath);
