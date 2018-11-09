@@ -43,10 +43,4 @@ public class ReadConfigUtil {
 	public static String getValue(String key) {
 		return configObj.getProperty(key);
 	}
-
-	public static void main(String[] args) throws IOException {
-		String filePath = "spider.properties";
-		ReadConfigUtil readConfigUtil = new ReadConfigUtil(filePath);
-		System.out.println(readConfigUtil.getValue("init_Consumer_Number"));
-	}
 }
