@@ -9,7 +9,7 @@ import com.tl.job002.pojos.entity.NewsItemEntity;
 import com.tl.job002.utils.WebpageDownloadUtil4HttpClient;
 
 public class HtmlParserManager {
-	public static NewsItemParserInterface parserInterface = new NewsItemParser4RegexImpl();
+	public static NewsItemParserInterface parserInterface = new NewsItemParser4JsoupImpl();
 
 	public static List<NewsItemEntity> parserHtmlSource(String htmlSource) throws ParseException {
 		return parserInterface.parserHtmlSource(htmlSource);

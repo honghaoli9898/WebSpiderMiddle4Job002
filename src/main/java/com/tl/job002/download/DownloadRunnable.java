@@ -1,9 +1,14 @@
 package com.tl.job002.download;
 
+import java.text.ParseException;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.tl.job002.iface.download.DownloadInterface;
+import com.tl.job002.parse.HtmlParserManager;
 import com.tl.job002.pojos.UrlTaskPojo;
+import com.tl.job002.pojos.entity.NewsItemEntity;
 import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.ui.UIManager;
 import com.tl.job002.utils.SystemConfigParas;
@@ -24,17 +29,27 @@ public class DownloadRunnable implements Runnable {
 		while (enableRunning) {
 			UrlTaskPojo taskPojo = TaskScheduleManager.take();
 			if (taskPojo != null) {
+				// 1.打印下载的内容
 				String htmlSource = downloadInterface.download(taskPojo.getUrl());
+				logger.info(this.name + "将进入解析环节");
 				if (htmlSource != null) {
-					// 1.打印下载的内容
+					try {
+						List<NewsItemEntity> itemEntityList = HtmlParserManager.parserHtmlSource(htmlSource);
+						for (NewsItemEntity newsItemEntity : itemEntityList) {
+							System.out.println(newsItemEntity);
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 					// logger.info(htmlSource);
-					logger.info(this.name + "将进入解析环节");
+					logger.info("一页解析完成,即将下一页");
 				} else {
 					// 如果htmlSource==null,代表下载出错了
 					logger.error(this.name + "下载出错,该任务为=" + taskPojo.getUrl());
 				}
 			} else {
-				logger.info(this.name + "没有带采集的任务,线程将睡眠"+SystemConfigParas.once_sleep_time_for_empty_task/1000+"秒");
+				logger.info(
+						this.name + "没有带采集的任务,线程将睡眠" + SystemConfigParas.once_sleep_time_for_empty_task / 1000 + "秒");
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
@@ -66,9 +81,7 @@ public class DownloadRunnable implements Runnable {
 	public static void main(String[] args) throws Exception {
 		// 将带采集的url加入到Task任务当中
 		UIManager.addSeedUrlsToTaskSchedule();
-		DownloadRunnable runnable_1 = new DownloadRunnable("runnable_1");
-		DownloadRunnable runnable_2 = new DownloadRunnable("runnable_1");
-		new Thread(runnable_1).start();
-		new Thread(runnable_2).start();
+		//启动线程
+		DownloadManager.start();
 	}
 }

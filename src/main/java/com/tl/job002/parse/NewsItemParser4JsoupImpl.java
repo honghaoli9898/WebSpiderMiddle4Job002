@@ -52,9 +52,6 @@ public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
 			itemEntity = new NewsItemEntity(title, href, postTime);
 			itemList.add(itemEntity);
 		}
-		for (NewsItemEntity element : itemList) {
-			System.out.println(element);
-		}
 		return itemList;
 	}
 }
