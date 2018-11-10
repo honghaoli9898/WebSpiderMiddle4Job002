@@ -15,7 +15,6 @@ import com.tl.job002.utils.StaticValue;
 
 public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
 
-	// 此方法逻辑不合常理固抛弃
 	// @Override
 	// public List<NewsItemEntity> parserHtmlSource(String htmlSource) throws
 	// ParseException {
@@ -36,19 +35,21 @@ public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
 	@Override
 	public List<NewsItemEntity> parserHtmlSource(String htmlSource) throws ParseException {
 		List<NewsItemEntity> itemList = new ArrayList<NewsItemEntity>();
-		// 取得li所有元素
 		String selector = "ul.tj3_1>li";
 		Elements liElements = JsoupUtil.getElementsBySelector(htmlSource, selector);
 		NewsItemEntity itemEntity = null;
 		String title = null;
 		String postTime = null;
 		String href = null;
-		// 遍历li element 通过child和attribuate
 		for (Element element : liElements) {
 			title = JsoupUtil.getChildElementValue(element, 1, ContentSelectType.TEXT);
 			postTime = JsoupUtil.getChildElementValue(element, 0, ContentSelectType.TEXT);
 			href = JsoupUtil.getAttributeValue(element.child(1), "href");
-			href = StaticValue.rootUrl+href.substring(2);
+			if(href.startsWith("../")){
+				href = StaticValue.indexUrl+href.substring(3);
+			}else{
+				href = StaticValue.rootUrl+href.substring(2);
+			}
 			itemEntity = new NewsItemEntity(title, href, postTime);
 			itemList.add(itemEntity);
 		}

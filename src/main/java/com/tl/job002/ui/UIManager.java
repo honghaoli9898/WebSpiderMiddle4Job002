@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.tl.job002.download.DownloadManager;
 import com.tl.job002.pojos.UrlTaskPojo;
 import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.utils.IOUtil;
@@ -54,8 +55,9 @@ public class UIManager {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String dataFilePath = "seed.txt";
-		List<UrlTaskPojo> resultTaskPojo = UIManager.getRootUrlBySeedFileForClassPath(dataFilePath, false);
-		System.out.println(resultTaskPojo);
+		//启动uiManager注入种子任务
+		addSeedUrlsToTaskSchedule();
+		//启动下载线程 并完成解析
+		DownloadManager.start();
 	}
 }

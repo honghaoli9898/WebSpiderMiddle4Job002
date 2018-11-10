@@ -14,9 +14,15 @@ public class DataPersist4MysqlImpl implements DataPersistrnceInterface {
 	private DataBaseUtil databaseUtil;
 	String sql = "insert into news_item_info_middle(title,source_url,post_time,insert_time) values(?,?,?,?)";
 
-	public DataPersist4MysqlImpl() throws ClassNotFoundException, SQLException {
-		databaseUtil = new DataBaseUtil(SystemConfigParas.db_driver, SystemConfigParas.db_url,
-				SystemConfigParas.db_username, SystemConfigParas.db_password);
+	public DataPersist4MysqlImpl() {
+		try {
+			databaseUtil = new DataBaseUtil(SystemConfigParas.db_driver, SystemConfigParas.db_url,
+					SystemConfigParas.db_username, SystemConfigParas.db_password);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

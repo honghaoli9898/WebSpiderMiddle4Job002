@@ -35,11 +35,14 @@ public class NewsItemParser4RegexImpl implements NewsItemParserInterface {
 			// 获取链接
 			String hrefRegex = "<a href=\"([\\s\\S]*?)\">";
 			String href = RegexUtil.getMatchText(input, hrefRegex, 1);
-			href = StaticValue.rootUrl + href.substring(2);
+			if (href.startsWith("../")) {
+				href = StaticValue.indexUrl + href.substring(3);
+			} else {
+				href = StaticValue.rootUrl + href.substring(2);
+			}
 			// 获取发布时间
 			String postTimeRegex = "<font>([\\s\\S]*?)</font>";
 			String postTime = RegexUtil.getMatchText(input, postTimeRegex, 1);
-			System.out.println(postTime);
 			itemEntity = new NewsItemEntity(title, href, postTime);
 			itemEntityList.add(itemEntity);
 		}

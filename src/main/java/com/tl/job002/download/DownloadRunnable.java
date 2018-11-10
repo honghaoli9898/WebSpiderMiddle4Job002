@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.tl.job002.iface.download.DownloadInterface;
 import com.tl.job002.parse.HtmlParserManager;
+import com.tl.job002.persistence.DataPersistManager;
 import com.tl.job002.pojos.UrlTaskPojo;
 import com.tl.job002.pojos.entity.NewsItemEntity;
 import com.tl.job002.schedule.TaskScheduleManager;
@@ -35,14 +36,12 @@ public class DownloadRunnable implements Runnable {
 				if (htmlSource != null) {
 					try {
 						List<NewsItemEntity> itemEntityList = HtmlParserManager.parserHtmlSource(htmlSource);
-						for (NewsItemEntity newsItemEntity : itemEntityList) {
-							System.out.println(newsItemEntity);
-						}
+						// 将解析结果进行持久化存储
+						DataPersistManager.persist(itemEntityList);
+						logger.info("一页解析持久化完成,即将下一页");
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
-					// logger.info(htmlSource);
-					logger.info("一页解析完成,即将下一页");
 				} else {
 					// 如果htmlSource==null,代表下载出错了
 					logger.error(this.name + "下载出错,该任务为=" + taskPojo.getUrl());
@@ -81,7 +80,7 @@ public class DownloadRunnable implements Runnable {
 	public static void main(String[] args) throws Exception {
 		// 将带采集的url加入到Task任务当中
 		UIManager.addSeedUrlsToTaskSchedule();
-		//启动线程
+		// 启动线程
 		DownloadManager.start();
 	}
 }
