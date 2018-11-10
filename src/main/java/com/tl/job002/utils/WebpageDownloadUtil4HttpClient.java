@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.tl.job002.iface.download.DownloadInterface;
 
-public class WebpageDownloadUtil4HttpClient implements DownloadInterface{
+public class WebpageDownloadUtil4HttpClient implements DownloadInterface {
 	@SuppressWarnings("deprecation")
 	public static String parseEntity(HttpEntity entity, String defaultCharset) throws IOException {
 		String findCharset = null;
@@ -65,8 +65,9 @@ public class WebpageDownloadUtil4HttpClient implements DownloadInterface{
 		}
 		return htmlSource;
 	}
+
 	@Override
-	public String download(String url){
+	public String download(String url) {
 		try {
 			return downloadStatic(url);
 		} catch (IOException e) {
@@ -76,12 +77,12 @@ public class WebpageDownloadUtil4HttpClient implements DownloadInterface{
 	}
 
 	public static void main(String[] args) throws Exception {
-//		String url = "http://www.sohu.com";
+		// String url = "http://www.sohu.com";
 		String url = "http://news.youth.cn/gn";
-//		String url = "http://www.baidu.com";
-//		String url = "http://www.qq.com";
-//		String url = "http://www.163.com";
-		String htmlSource=downloadStatic(url);
+		// String url = "http://www.baidu.com";
+		// String url = "http://www.qq.com";
+		// String url = "http://www.163.com";
+		String htmlSource = downloadStatic(url);
 		System.out.println(htmlSource);
 	}
 

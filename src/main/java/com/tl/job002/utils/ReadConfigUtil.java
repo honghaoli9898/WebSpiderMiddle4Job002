@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class ReadConfigUtil {
 	// 初始化javase自带的配置文件读取工具类
-	private static Properties configObj = null;
+	private Properties configObj = null;
 	private String configFilePath;
 	private static Logger logger = Logger.getLogger(ReadConfigUtil.class);
 
@@ -40,7 +40,7 @@ public class ReadConfigUtil {
 		reader.close();
 	}
 
-	public static String getValue(String key) {
+	public String getValue(String key) {
 		return configObj.getProperty(key);
 	}
 }

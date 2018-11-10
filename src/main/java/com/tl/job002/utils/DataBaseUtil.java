@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 /**
  * mysql 数据库工具类
@@ -94,28 +93,33 @@ public class DataBaseUtil {
 		this.password = password;
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		String mysqlDriver = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8";
-		String userName = "root";
-		String password = "haojiayou@";
-		DataBaseUtil dbUtil = new DataBaseUtil(mysqlDriver, url, userName, password);
-		String sql = "select * from news_item_info_middle";
-		// 获取执行sql的对象
-		PreparedStatement ps = dbUtil.getPreparedStatement(sql);
-		ResultSet rs = dbUtil.getResultSetByStat(sql);
-		// 填充sql及执行相关语句
-		while(rs.next()){
-			String title = rs.getString("title");
-			String source_url = rs.getString("source_url");
-			String post_time = rs.getString("post_time");
-			String insert_time = rs.getString("insert_time");
-			System.out.println(title);
-			System.out.println(source_url);
-			System.out.println(post_time);
-			System.out.println(insert_time);
-		}
-		rs.close();
-		dbUtil.close();
+	public int insert(String sql) throws SQLException {
+		PreparedStatement ps = dbConn.prepareStatement(sql);
+		int result = ps.executeUpdate();
+		return result;
+	}
+
+	public int updata(String sql) throws SQLException {
+		PreparedStatement ps = dbConn.prepareStatement(sql);
+		int result = ps.executeUpdate();
+		return result;
+	}
+
+	public int delet(String sql) throws SQLException {
+		PreparedStatement ps = dbConn.prepareStatement(sql);
+		int result = ps.executeUpdate();
+		return result;
+	}
+
+	public ResultSet select(String sql) throws SQLException {
+		PreparedStatement ps = dbConn.prepareStatement(sql);
+		ResultSet result = ps.executeQuery(sql);
+		return result;
+	}
+
+	public boolean load(String sql) throws SQLException {
+		PreparedStatement ps = dbConn.prepareStatement(sql);
+		boolean result = ps.execute();
+		return result;
 	}
 }

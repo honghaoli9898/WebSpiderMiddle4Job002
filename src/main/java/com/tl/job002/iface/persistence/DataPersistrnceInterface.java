@@ -11,8 +11,9 @@ import com.tl.job002.pojos.entity.NewsItemEntity;
  * @date 2018年11月10日
  */
 public interface DataPersistrnceInterface {
-	//批量保存
+	// 批量保存
 	public boolean persist(List<NewsItemEntity> itemList);
-	//单条保存
+
+	// 单条保存
 	public boolean persist(NewsItemEntity item);
 }
