@@ -11,23 +11,41 @@ import java.util.Date;
  * @date 2018年11月9日
  */
 public class DateUtil {
-	public static String yyyyMMDDHHmmss = "yyyy-MM-dd HH:mm:ss";
-	static SimpleDateFormat sdf_yyyyMMDDHHmmss = new SimpleDateFormat(yyyyMMDDHHmmss);
+	public static final String pattern = "yyyy-MM-dd HH:mm:ss";
+	public static final String pattern_year_month_day = "yyyy-MM-dd";
+
+	public static SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+	public static SimpleDateFormat sdf_year_month_day = new SimpleDateFormat(pattern_year_month_day);
 
 	// 拿到当前所属的date对象
 	public static Date getDate() {
 		return new Date();
 	}
 
-	public static Date parseStringToDate(String dateString) throws ParseException {
-		return sdf_yyyyMMDDHHmmss.parse(dateString);
+	public static Date parserStringToDate(String dateString) throws ParseException {
+		Date datetimeObj = null;
+		synchronized (sdf) {
+			datetimeObj = sdf.parse(dateString);
+		}
+		return datetimeObj;
 	}
 
-	public static String formatStringToDate(Date date) throws ParseException {
-		return sdf_yyyyMMDDHHmmss.format(date);
+	public static String formatDateToString(Date date) {
+		synchronized (sdf) {
+			return sdf.format(date);
+		}
 	}
-	public static void main(String[] args) throws ParseException {
-		String s= "2018-11-08 03:04:00";
-		System.out.println(parseStringToDate(s));
+
+	public static String formatDateToStringYearMonthDay(Date date) {
+		synchronized (sdf_year_month_day) {
+			return sdf_year_month_day.format(date);
+		}
+	}
+
+	public static String getCurrentDay() {
+		return formatDateToStringYearMonthDay(DateUtil.getDate());
+	}
+	public static void main(String[] args) {
+		System.out.println(getCurrentDay());
 	}
 }

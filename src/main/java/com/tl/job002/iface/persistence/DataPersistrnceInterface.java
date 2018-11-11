@@ -1,5 +1,6 @@
 package com.tl.job002.iface.persistence;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 import com.tl.job002.pojos.entity.NewsItemEntity;
@@ -16,4 +17,7 @@ public interface DataPersistrnceInterface {
 
 	// 单条保存
 	public boolean persist(NewsItemEntity item);
+	
+	//获取数据库内容
+	public ResultSet getResultSet(String sql);
 }

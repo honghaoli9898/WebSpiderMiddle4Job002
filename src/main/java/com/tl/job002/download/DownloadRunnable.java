@@ -32,13 +32,18 @@ public class DownloadRunnable implements Runnable {
 			if (taskPojo != null) {
 				// 1.打印下载的内容
 				String htmlSource = downloadInterface.download(taskPojo.getUrl());
-				logger.info(this.name + "将进入解析环节");
 				if (htmlSource != null) {
 					try {
 						List<NewsItemEntity> itemEntityList = HtmlParserManager.parserHtmlSource(htmlSource);
 						// 将解析结果进行持久化存储
-						DataPersistManager.persist(itemEntityList);
-						logger.info("一页解析持久化完成,即将下一页");
+						boolean findRepeatFlag = DataPersistManager.persist(itemEntityList);
+						if(findRepeatFlag){
+							TaskScheduleManager.cleanTodoTaskList();
+							logger.info("已发现重复采集的数据,将清空本轮的带采集的任务,待下一轮开启");
+						}
+						// 将已成功采集完成的URL加入到donetask 中
+						TaskScheduleManager.addDoneUrlPojo(taskPojo);
+						logger.info(taskPojo.getUrl() + "解析持久化完成,即将下一页");
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
@@ -50,7 +55,7 @@ public class DownloadRunnable implements Runnable {
 				logger.info(
 						this.name + "没有带采集的任务,线程将睡眠" + SystemConfigParas.once_sleep_time_for_empty_task / 1000 + "秒");
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(SystemConfigParas.once_sleep_time_for_empty_task);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

@@ -1,6 +1,7 @@
 package com.tl.job002.persistence;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -68,5 +69,15 @@ public class DataPersist4MysqlImpl implements DataPersistrnceInterface {
 		NewsItemEntity itemEntity = new NewsItemEntity("≤‚ ‘title", "http://www.baidu.com", "2018-07-27 15:04:06");
 		mysqlPersist.persist(itemEntity);
 		System.out.println("done!");
+	}
+
+	@Override
+	public ResultSet getResultSet(String sql) {
+		try {
+			return databaseUtil.getResultSetByStat(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

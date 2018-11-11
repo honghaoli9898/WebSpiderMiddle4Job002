@@ -53,7 +53,7 @@
 
 	</dependencies>
 	<build>
-		<finalName>WeiboDataToHive</finalName>
+		<finalName>WebSpiderMiddle4Job002</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

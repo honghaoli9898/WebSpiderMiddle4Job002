@@ -1,4 +1,5 @@
 package com.tl.job002.pojos.entity;
+
 /**
  * 解析后的对象类
  * @author lihonghao
@@ -26,7 +27,7 @@ public class NewsItemEntity {
 		this.sourceURL = sourceURL;
 		this.postTimeString = postTimeString;
 		this.insertDate = DateUtil.getDate();
-		this.postDateObj = DateUtil.parseStringToDate(postTimeString);
+		this.postDateObj = DateUtil.parserStringToDate(postTimeString);
 	}
 
 	public String getTitle() {
@@ -73,5 +74,9 @@ public class NewsItemEntity {
 	public String toString() {
 		return "NewsItemEntity [title=" + title + ", sourceURL=" + sourceURL + ", insertDate=" + insertDate
 				+ ", postDateObj=" + postDateObj + ", postTimeString=" + postTimeString + "]";
+	}
+
+	public String toUniqString() {
+		return title + sourceURL;
 	}
 }

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -14,7 +15,7 @@ import com.tl.job002.utils.JsoupUtil.ContentSelectType;
 import com.tl.job002.utils.StaticValue;
 
 public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
-
+	public static Logger logger = Logger.getLogger(NewsItemParser4JsoupImpl.class);
 	// @Override
 	// public List<NewsItemEntity> parserHtmlSource(String htmlSource) throws
 	// ParseException {
@@ -33,7 +34,7 @@ public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
 	// return null;
 	// }
 	@Override
-	public List<NewsItemEntity> parserHtmlSource(String htmlSource) throws ParseException {
+	public List<NewsItemEntity> parserHtmlSource(String htmlSource) {
 		List<NewsItemEntity> itemList = new ArrayList<NewsItemEntity>();
 		String selector = "ul.tj3_1>li";
 		Elements liElements = JsoupUtil.getElementsBySelector(htmlSource, selector);
@@ -50,7 +51,12 @@ public class NewsItemParser4JsoupImpl implements NewsItemParserInterface {
 			}else{
 				href = StaticValue.rootUrl+href.substring(2);
 			}
-			itemEntity = new NewsItemEntity(title, href, postTime);
+			try {
+				itemEntity = new NewsItemEntity(title, href, postTime);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				logger.error("出错信息:"+title+'\n'+href+'\n'+postTime);
+			}
 			itemList.add(itemEntity);
 		}
 		return itemList;
