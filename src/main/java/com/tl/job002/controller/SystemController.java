@@ -1,6 +1,9 @@
 package com.tl.job002.controller;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.tl.job002.download.DownloadManager;
 import com.tl.job002.monitor.MonitorManager;
@@ -8,6 +11,9 @@ import com.tl.job002.ui.UIManager;
 import com.tl.job002.utils.SystemConfigParas;
 
 public class SystemController {
+	static {
+		PropertyConfigurator.configure(System.getProperty("user.dir") + File.separator + "log4j.properties");
+	}
 	public static Logger logger = Logger.getLogger(SystemController.class);
 
 	public static void main(String[] args) throws Exception {
