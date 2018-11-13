@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.tl.job002.download.DownloadManager;
-import com.tl.job002.monitor.MonitorManager;
 import com.tl.job002.pojos.UrlTaskPojo;
 import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.utils.IOUtil;
