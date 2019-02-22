@@ -13,7 +13,7 @@ import com.tl.job002.pojos.entity.NewsItemEntity;
 import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.ui.UIManager;
 import com.tl.job002.utils.SystemConfigParas;
-import com.tl.job002.utils.WebpageDownloadUtil4HttpClient;
+import com.tl.job002.utils.WebPageDownloadUtil4HttpClient;
 
 public class DownloadRunnable implements Runnable {
 	private boolean enableRunning = true;
@@ -26,7 +26,7 @@ public class DownloadRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		DownloadInterface downloadInterface = new WebpageDownloadUtil4HttpClient();
+		DownloadInterface downloadInterface = new WebPageDownloadUtil4HttpClient();
 		while (enableRunning) {
 			UrlTaskPojo taskPojo = TaskScheduleManager.take();
 			if (taskPojo != null) {
@@ -34,7 +34,7 @@ public class DownloadRunnable implements Runnable {
 				String htmlSource = downloadInterface.download(taskPojo.getUrl());
 				if (htmlSource != null) {
 					try {
-						List<NewsItemEntity> itemEntityList = HtmlParserManager.parserHtmlSource(htmlSource);
+						List<NewsItemEntity> itemEntityList = HtmlParserManager.parserHtmlSource_1(htmlSource);
 						// 将解析结果进行持久化存储
 						boolean findRepeatFlag = DataPersistManager.persist(itemEntityList);
 						if(findRepeatFlag){

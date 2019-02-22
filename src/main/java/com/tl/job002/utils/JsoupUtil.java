@@ -30,13 +30,14 @@ public class JsoupUtil {
 		return doc;
 	}
 
-	public static Elements getElementsBySelector(String htmlSource, String selector) {
+	public static Elements getElementsBySelector(String htmlSource,
+			String selector) {
 		Document document = getDoc(htmlSource);
 		return document.select(selector);
 	}
 
-	public static List<String> getElementsBySelector(String htmlSource, String selector,
-			ContentSelectType contentType) {
+	public static List<String> getElementsBySelector(String htmlSource,
+			String selector, ContentSelectType contentType) {
 		Elements elements = getElementsBySelector(htmlSource, selector);
 		List<String> eleList = new ArrayList<String>();
 
@@ -62,7 +63,8 @@ public class JsoupUtil {
 		return eleList;
 	}
 
-	public static List<String> getElementsBySelector(String htmlSource, String selector, String selectAttribute) {
+	public static List<String> getElementsBySelector(String htmlSource,
+			String selector, String selectAttribute) {
 		Asserts.notBlank(selectAttribute, "is not null");
 		Elements elements = getElementsBySelector(htmlSource, selector);
 		List<String> eleList = new ArrayList<String>();
@@ -77,7 +79,8 @@ public class JsoupUtil {
 		return element.attr(attributeKey);
 	}
 
-	public static String getChildElementValue(Element element, int childIndex, ContentSelectType contentType) {
+	public static String getChildElementValue(Element element, int childIndex,
+			ContentSelectType contentType) {
 		String value = null;
 		switch (contentType) {
 		case OUTHER_HTML:
@@ -94,9 +97,15 @@ public class JsoupUtil {
 		}
 		return value;
 	}
+
+	public static String attributeValue(Element element, String key) {
+		String value = element.attr(key);
+		return value;
+	}
+
 	public static void main(String[] args) throws ParseException {
 		String url = "http://news.youth.cn/gn/";
-		DownloadInterface download = new WebpageDownloadUtil4HttpClient();
+		DownloadInterface download = new WebPageDownloadUtil4HttpClient();
 		String htmlSource = download.download(url);
 		NewsItemParserInterface s = new NewsItemParser4JsoupImpl();
 		s.parserHtmlSource(htmlSource);

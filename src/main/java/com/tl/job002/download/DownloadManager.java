@@ -26,6 +26,14 @@ public class DownloadManager {
 			runnableList.add(oneRunnable);
 		}
 	}
+	public static void start_1(){
+		List<Runnable> runnableList = new ArrayList<Runnable>();
+		for (int i = 0; i < SystemConfigParas.init_consumer_number; i++) {
+			JDDownloadRunnable oneRunnable = new JDDownloadRunnable("download_consumer_" + i);
+			new Thread(tGroup, oneRunnable, "thread_" + i).start();
+			runnableList.add(oneRunnable);
+		}
+	}
 
 	// 获取线程的状态信息-多少个还活着的下载线程
 	public static int getActiveDownloadThreads() {
@@ -51,6 +59,6 @@ public class DownloadManager {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		start();
+		start_1();
 	}
 }

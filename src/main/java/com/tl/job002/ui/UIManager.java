@@ -9,6 +9,7 @@ import com.tl.job002.pojos.UrlTaskPojo;
 import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.utils.IOUtil;
 import com.tl.job002.utils.StaticValue;
+import com.tl.job002.utils.SystemConfigParas;
 
 /**
  * 该类作用为用户接口的管理类，包括种子添加接口 种子添加的不同方式和来源
@@ -27,16 +28,18 @@ public class UIManager {
 		return new UrlTaskPojo(StaticValue.rootTitle, StaticValue.rootUrl);
 	}
 
-	public static List<UrlTaskPojo> getRootUrlBySeedFileForClassPath(String filePath, boolean isClassPath)
-			throws Exception {
-		List<String> lineList = IOUtil.readFileToList(filePath, isClassPath, StaticValue.defaultENCODING);
+	public static List<UrlTaskPojo> getRootUrlBySeedFileForClassPath(
+			String filePath, boolean isClassPath) throws Exception {
+		List<String> lineList = IOUtil.readFileToList(filePath, isClassPath,
+				StaticValue.defaultENCODING);
 		List<UrlTaskPojo> resultTaskPojo = new ArrayList<UrlTaskPojo>();
 		for (String line : lineList) {
 			line = line.trim();
 			if (line.length() > 0 && !line.startsWith("#")) {
 				String[] columnArray = line.split("\\s");
 				if (columnArray.length == 2) {
-					UrlTaskPojo tempPojo = new UrlTaskPojo(columnArray[0].trim(), columnArray[1].trim());
+					UrlTaskPojo tempPojo = new UrlTaskPojo(
+							columnArray[0].trim(), columnArray[1].trim());
 					resultTaskPojo.add(tempPojo);
 				} else {
 					looger.error("错误行为:" + line);
@@ -47,9 +50,19 @@ public class UIManager {
 		return resultTaskPojo;
 	}
 
+	// todoTaskPojoList
 	public static void addSeedUrlsToTaskSchedule() throws Exception {
 		String dataFilePath = "seed.txt";
-		List<UrlTaskPojo> seedUrlPojoList = UIManager.getRootUrlBySeedFileForClassPath(dataFilePath, false);
-		TaskScheduleManager.addUrlPojoList(seedUrlPojoList);
+		List<UrlTaskPojo> seedUrlPojoList = UIManager
+				.getRootUrlBySeedFileForClassPath(dataFilePath, false);
+		List<UrlTaskPojo> urlPojoList = new ArrayList<UrlTaskPojo>();
+		for (UrlTaskPojo urlTaskPojo : seedUrlPojoList) {
+			for (int i = 1; i < SystemConfigParas.download_page_num; i++) {
+				urlPojoList.add(new UrlTaskPojo(urlTaskPojo.getTitle(),
+						urlTaskPojo.getUrl().replace("()", "" + (2 * i - 1))));
+			}
+
+		}
+		TaskScheduleManager.addUrlPojoList(urlPojoList);
 	}
 }

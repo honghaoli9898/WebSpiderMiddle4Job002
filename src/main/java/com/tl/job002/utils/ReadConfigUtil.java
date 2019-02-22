@@ -36,6 +36,6 @@ public class ReadConfigUtil {
 	}
 
 	public String getValue(String key) {
-		return configObj.getProperty(key);
+		return configObj.getProperty(key).trim();
 	}
 }

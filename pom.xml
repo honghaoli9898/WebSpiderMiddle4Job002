@@ -5,38 +5,18 @@
 	<artifactId>WebSpiderMiddle4Job002</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<!-- 配置maven多环境属性,方便灵活打包 -->
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<env>dev</env>
-				<ant-properties-path>src/main/resources/conf/dev/jdbc.properties</ant-properties-path>
-				<ant-properties-path-2>src/main/resources/conf/dev/spider.properties</ant-properties-path-2>
-				<ant-properties-path-3>src/main/resources/conf/dev/log4j.properties</ant-properties-path-3>
-			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
-			<id>test</id>
-			<properties>
-				<env>test</env>
-				<ant-properties-path>src/main/resources/conf/test/jdbc.properties</ant-properties-path>
-				<ant-properties-path-2>src/main/resources/conf/test/spider.properties</ant-properties-path-2>
-				<ant-properties-path-3>src/main/resources/conf/test/spider.properties</ant-properties-path-3>
-			</properties>
-		</profile>
-		<profile>
-			<id>product</id>
-			<properties>
-				<env>product</env>
-				<ant-properties-path>src/main/resources/conf/product/jdbc.properties</ant-properties-path>
-				<ant-properties-path-2>src/main/resources/conf/product/spider.properties</ant-properties-path-2>
-				<ant-properties-path-3>src/main/resources/conf/product/spider.properties</ant-properties-path-3>
-			</properties>
-		</profile>
-	</profiles>
+	<!-- <profiles> <profile> <id>dev</id> <properties> <env>dev</env> <ant-properties-path>src/main/resources/conf/dev/jdbc.properties</ant-properties-path> 
+		<ant-properties-path-2>src/main/resources/conf/dev/spider.properties</ant-properties-path-2> 
+		<ant-properties-path-3>src/main/resources/conf/dev/log4j.properties</ant-properties-path-3> 
+		</properties> <activation> <activeByDefault>true</activeByDefault> </activation> 
+		</profile> <profile> <id>test</id> <properties> <env>test</env> <ant-properties-path>src/main/resources/conf/test/jdbc.properties</ant-properties-path> 
+		<ant-properties-path-2>src/main/resources/conf/test/spider.properties</ant-properties-path-2> 
+		<ant-properties-path-3>src/main/resources/conf/test/spider.properties</ant-properties-path-3> 
+		</properties> </profile> <profile> <id>product</id> <properties> <env>product</env> 
+		<ant-properties-path>src/main/resources/conf/product/jdbc.properties</ant-properties-path> 
+		<ant-properties-path-2>src/main/resources/conf/product/spider.properties</ant-properties-path-2> 
+		<ant-properties-path-3>src/main/resources/conf/product/spider.properties</ant-properties-path-3> 
+		</properties> </profile> </profiles> -->
 
 	<!-- 仓库源 -->
 	<repositories>
@@ -47,24 +27,33 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!-- +++|selenium|+++ -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>3.5.1</version>
+		</dependency>
+		<!-- +++|phantomjsdriver|+++ -->
+		<dependency>
+			<groupId>com.github.detro.ghostdriver</groupId>
+			<artifactId>phantomjsdriver</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 		<!--httpcline-4.5.2依赖 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.2</version>
 		</dependency>
-
-		<!-- 引入 hadoop-cli-2.7.4 依赖 -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>2.7.4</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.15</version>
 		</dependency>
 		<!-- 引入log4j 1.2.17依赖 -->
 		<dependency>
@@ -102,8 +91,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 
@@ -119,14 +108,11 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
-								<copy file="${ant-properties-path}" overwrite="true"
-									tofile="${project.build.directory}/jdbc.properties" />
-								<copy file="${ant-properties-path-2}" overwrite="true"
-									tofile="${project.build.directory}/spider.properties" />
-								<copy file="${ant-properties-path-3}" overwrite="true"
-									tofile="${project.build.directory}/classes/spider.properties" />
-							</tasks>
+							<!-- <tasks> <copy file="${ant-properties-path}" overwrite="true" 
+								tofile="${project.build.directory}/jdbc.properties" /> <copy file="${ant-properties-path-2}" 
+								overwrite="true" tofile="${project.build.directory}/spider.properties" /> 
+								<copy file="${ant-properties-path-3}" overwrite="true" tofile="${project.build.directory}/classes/spider.properties" 
+								/> </tasks> -->
 						</configuration>
 					</execution>
 				</executions>
