@@ -7,6 +7,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import com.tl.job002.download.DownloadManager;
 import com.tl.job002.monitor.MonitorManager;
+import com.tl.job002.schedule.TaskScheduleManager;
 import com.tl.job002.ui.UIManager;
 import com.tl.job002.utils.SystemConfigParas;
 
@@ -28,14 +29,16 @@ public class SystemController {
 		// 周期执行
 		int circleCounter = 1;
 		while (true) {
-			logger.info("第" + circleCounter + "轮添加种子任务开始");
-			UIManager.addSeedUrlsToTaskSchedule();
-			logger.info("第" + circleCounter + "轮添加种子任务结束");
-			circleCounter++;
-			logger.info("即将休息" + SystemConfigParas.add_seed_time_one_circle
-					/ 1000 + "秒");
-			Thread.sleep(SystemConfigParas.add_seed_time_one_circle);
-			logger.info("第" + circleCounter + "轮执行结束");
+			if (TaskScheduleManager.isNull4TodoTaskPojoList()) {
+				logger.info("第" + circleCounter + "轮添加种子任务开始");
+				UIManager.addSeedUrlsToTaskSchedule();
+				logger.info("第" + circleCounter + "轮添加种子任务结束");
+				circleCounter++;
+				logger.info("即将休息" + SystemConfigParas.add_seed_time_one_circle
+						/ 1000 + "秒");
+				Thread.sleep(SystemConfigParas.add_seed_time_one_circle);
+				logger.info("第" + circleCounter + "轮执行结束");
+			}
 		}
 	}
 }

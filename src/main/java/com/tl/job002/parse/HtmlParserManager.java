@@ -41,11 +41,12 @@ public class HtmlParserManager {
 			WebPageDownloadUtil4ChromeDriver downloadInterface,
 			Map<String, JDGoodsEntriy> jdGoodsEntriyMap) {
 		int i = 0;
+		String commentUrl = null;
 		List<JDGoodsCommentsEntriy> jdGoodsCommentsEntriyList = null;
 		for (Entry<String, JDGoodsEntriy> entry : jdGoodsEntriyMap.entrySet()) {
-			String htmlSource = downloadInterface
-					.download(SystemConfigParas.comment_url.replace("()", entry
-							.getValue().getGoodsSKU()));
+			commentUrl = SystemConfigParas.comment_url.replace("()", entry
+					.getValue().getGoodsSKU());
+			String htmlSource = downloadInterface.download(commentUrl);
 			if (htmlSource != null) {
 				htmlSource = JsoupUtil
 						.getElementsBySelector(htmlSource, "body").text();
@@ -59,11 +60,16 @@ public class HtmlParserManager {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}else{
-				
+			} else {
+				logger.error("评论url:" + commentUrl + "已尝试所有模式");
+				logger.info("-----------即将休息2小时-----------");
+				try {
+					Thread.sleep(7200000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return jdGoodsCommentsEntriyList;
 	}
-
 }

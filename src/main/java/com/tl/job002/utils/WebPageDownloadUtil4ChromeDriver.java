@@ -9,6 +9,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.tl.job002.parse.JDGoodsParser4JsoupImpl;
 import com.tl.job002.pojos.entity.JDGoodsCommentsEntriy;
@@ -17,8 +19,10 @@ import com.tl.job002.schedule.TaskScheduleManager;
 
 public class WebPageDownloadUtil4ChromeDriver {
 	private WebDriver webDriver;
+	public WebDriverWait waitTitle;
 	public static Logger logger = Logger
 			.getLogger(WebPageDownloadUtil4ChromeDriver.class);
+	public int temp = 1;
 
 	public String download(String url) {
 		String html = null;
@@ -29,6 +33,8 @@ public class WebPageDownloadUtil4ChromeDriver {
 				slideDown(webDriver);
 				Thread.sleep(RandomNumberUtil.getRandomNumber());
 				html = webDriver.getPageSource();
+				logger.info(url + "采集完毕");
+				return html;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -36,37 +42,12 @@ public class WebPageDownloadUtil4ChromeDriver {
 			// 关闭上一个浏览器
 			webDriver.quit();
 			WebDriverUtil.service.stop();
-			webDriver = WebDriverUtil.createWebDriver(true);
-			webDriver.get(url);
-			status = WebDriverUtil.getPagStatus(webDriver);
-			if (status.equals("200")) {
-				try {
-					slideDown(webDriver);
-					Thread.sleep(RandomNumberUtil.getRandomNumber());
-					html = webDriver.getPageSource();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			} else {
-				webDriver.quit();
-				WebDriverUtil.service.stop();
-				webDriver = WebDriverUtil.createWebDriver(true);
-				jdSimulationLogin();
-				webDriver.get(url);
-				status = WebDriverUtil.getPagStatus(webDriver);
-				if (status.equals("200)")) {
-					try {
-						slideDown(webDriver);
-						Thread.sleep(RandomNumberUtil.getRandomNumber());
-						html = webDriver.getPageSource();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				} else {
-					webDriver.quit();
-					WebDriverUtil.service.stop();
-					webDriver = WebDriverUtil.createWebDriver(false);
-					jdSimulationLogin();
+			if (SystemConfigParas.is_setting_proxy.equals("true")) {
+				while (temp == 1) {
+					webDriver = WebDriverUtil.createWebDriver(true);
+					logger.info(url + "切换模式1成功，这是第"
+							+ TaskScheduleManager.getProxyIpPoolListSize()
+							+ "次切换。");
 					webDriver.get(url);
 					status = WebDriverUtil.getPagStatus(webDriver);
 					if (status.equals("200")) {
@@ -74,18 +55,105 @@ public class WebPageDownloadUtil4ChromeDriver {
 							slideDown(webDriver);
 							Thread.sleep(RandomNumberUtil.getRandomNumber());
 							html = webDriver.getPageSource();
+							logger.info(url + "使用模式1采集完毕");
+							break;
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					} else {
-						webDriver.quit();
-						WebDriverUtil.service.stop();
-						logger.info(url + "不能下载成功");
+						if (TaskScheduleManager.getProxyIpPoolListSize() == SystemConfigParas.proxy_ip_pool
+								.size()) {
+							logger.info(url + "使用模式1完毕，即将切换模式2");
+							temp = 2;
+							TaskScheduleManager.cleanProxyIpPoolList();
+						}
 					}
 				}
+			} else {
+				temp = 2;
+			}
+			while (temp == 2) {
+				webDriver = WebDriverUtil.createWebDriver(false);
+				logger.info(url + "切换模式2成功，这是第"
+						+ TaskScheduleManager.getUserNameListSize() + "次切换。");
+				status = jdSimulationLogin();
+				if (status.equals("200")) {
+					webDriver.get(url);
+					status = WebDriverUtil.getPagStatus(webDriver);
+					if (status.equals("200)")) {
+						try {
+							slideDown(webDriver);
+							Thread.sleep(RandomNumberUtil.getRandomNumber());
+							html = webDriver.getPageSource();
+							logger.info(url + "使用模式2采集完毕");
+							break;
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					} else {
+						if (TaskScheduleManager.getUserNameListSize() == SystemConfigParas.login_user_name
+								.size()) {
+							logger.info(url + "使用模式2完毕，即将切换模式3");
+							temp = 3;
+							TaskScheduleManager.cleanUserNameList();
+						}
+					}
+				} else {
+					logger.info(url + "访问登录界面状态值不为200,即将切换模式3");
+					temp = 3;
+					TaskScheduleManager.cleanUserNameList();
+					// if (TaskScheduleManager.getUserNameListSize() ==
+					// SystemConfigParas.login_user_name
+					// .size()) {
+					// temp = 3;
+					// TaskScheduleManager.cleanUserNameList();
+					// }
+				}
+			}
+			if (SystemConfigParas.is_setting_proxy.equals("true")) {
+				while (temp == 3) {
+					webDriver = WebDriverUtil.createWebDriver(true);
+					logger.info(url + "切换模式3成功");
+					status = jdSimulationLogin();
+					if (status.equals("200")) {
+						webDriver.get(url);
+						status = WebDriverUtil.getPagStatus(webDriver);
+						if (status.equals("200)")) {
+							try {
+								slideDown(webDriver);
+								Thread.sleep(RandomNumberUtil.getRandomNumber());
+								html = webDriver.getPageSource();
+								logger.info(url + "使用模式3采集完毕");
+								break;
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						} else {
+							if (TaskScheduleManager.getUserNameListSize() == StaticValue.maxListSize
+									|| TaskScheduleManager
+											.getProxyIpPoolListSize() == StaticValue.maxListSize) {
+								temp = 1;
+								webDriver = WebDriverUtil
+										.createWebDriver(false);
+								TaskScheduleManager.cleanUserNameList();
+								TaskScheduleManager.cleanProxyIpPoolList();
+							}
+						}
+					} else {
+						logger.info(url + "模式3登录页状态值非200即将切换ip");
+						if (TaskScheduleManager.getProxyIpPoolListSize() == SystemConfigParas.proxy_ip_pool
+								.size()) {
+							logger.info(url + "在模式3中登录时切换了所有ip,即将退出下载");
+							temp = 1;
+							webDriver = WebDriverUtil.createWebDriver(false);
+							TaskScheduleManager.cleanProxyIpPoolList();
+						}
+					}
+				}
+			} else {
+				temp = 1;
 			}
 		}
-
 		return html;
 	}
 
@@ -97,7 +165,7 @@ public class WebPageDownloadUtil4ChromeDriver {
 			Thread.sleep(5000);
 			((JavascriptExecutor) webDriver)
 					.executeScript("window.scrollTo(document.body.scrollHeight/2,document.body.scrollHeight)");
-			Thread.sleep(5000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -137,41 +205,50 @@ public class WebPageDownloadUtil4ChromeDriver {
 	}
 
 	// 登录
-	public WebDriver jdSimulationLogin() {
+	public String jdSimulationLogin() {
 		webDriver.get(SystemConfigParas.jd_login_url);
-		webDriver.findElement(
-				By.xpath("//*[@id=\"content\"]/div[2]/div[1]/div/div[3]/a"))
-				.click();
-		try {
-			logger.info("选中账号登录----------即将休息1秒钟");
-			Thread.sleep(1000);
-			logger.info("休息结束-----------即将选中账号密码输入框");
-			WebElement username = webDriver.findElement(By
-					.xpath("//*[@id=\"loginname\"]"));
-			WebElement password = webDriver.findElement(By
-					.xpath("//*[@id=\"nloginpwd\"]"));
-			WebElement submit = webDriver.findElement(By
-					.xpath("//*[@id=\"loginsubmit\"]"));
-			delayInput(username, 0);
-			delayInput(password, 1);
-			submit.click();
-			Thread.sleep(2000);
-			String title = webDriver.getTitle();
-			logger.info("正在判断主页title是否为京东页面");
-			while (!title.equals(SystemConfigParas.jd_search_title)) {
-				title = webDriver.getTitle();
-				logger.info("title与京东主页title不同即将休息5秒----------");
-				Thread.sleep(5000);
-				logger.info("休息结束----------继续判断title");
+		String status = WebDriverUtil.getPagStatus(webDriver);
+		if (status.equals("200")) {
+			waitTitle = new WebDriverWait(webDriver, 10);
+			waitTitle
+					.until(ExpectedConditions.visibilityOf(webDriver.findElement(By
+							.xpath("//*[@id=\"content\"]/div[2]/div[1]/div/div[3]/a"))));
+			webDriver
+					.findElement(
+							By.xpath("//*[@id=\"content\"]/div[2]/div[1]/div/div[3]/a"))
+					.click();
+			try {
+				logger.info("选中账号登录----------即将休息1秒钟");
+				Thread.sleep(1000);
+				logger.info("休息结束-----------即将选中账号密码输入框");
+				WebElement username = webDriver.findElement(By
+						.xpath("//*[@id=\"loginname\"]"));
+				WebElement password = webDriver.findElement(By
+						.xpath("//*[@id=\"nloginpwd\"]"));
+				WebElement submit = webDriver.findElement(By
+						.xpath("//*[@id=\"loginsubmit\"]"));
+				delayInput(username, 0);
+				delayInput(password, 1);
+				submit.click();
+				Thread.sleep(2000);
+				String title = webDriver.getTitle();
+				logger.info("正在判断主页title是否为京东页面");
+				while (!title.equals(SystemConfigParas.jd_search_title)) {
+					title = webDriver.getTitle();
+					logger.info("title与京东主页title不同即将休息5秒----------");
+					Thread.sleep(5000);
+					logger.info("休息结束----------继续判断title");
+				}
+				logger.info("登录成功");
+				int sleepTime = RandomNumberUtil.getRandomNumber();
+				logger.info("即将休息" + sleepTime / 1000 + "秒-----------");
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			logger.info("登录成功");
-			int sleepTime = RandomNumberUtil.getRandomNumber();
-			logger.info("即将休息" + sleepTime / 1000 + "秒-----------");
-			Thread.sleep(sleepTime);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
-		return webDriver;
+		return status;
+
 	}
 
 	public static void main(String[] args) {

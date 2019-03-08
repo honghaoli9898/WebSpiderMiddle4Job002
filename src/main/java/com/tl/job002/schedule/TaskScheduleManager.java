@@ -33,10 +33,11 @@ public class TaskScheduleManager {
 	public static LinkedList<UrlTaskPojo> doneTaskPojoList = new LinkedList<UrlTaskPojo>();
 	// 程序中断后，恢复历史纪录所动用的。新闻实体数据的已采集URL的集合,用于判重和增量采集
 	public static Set<String> savedNewsEntityUrlSet = new HashSet<String>();
+
 	// 在static方法块中,将所有需要从数据库中恢复的数据进行查询及恢复
-	static {
-		recovery();
-	}
+	// static {
+	// recovery();
+	// }
 
 	public static void recovery() {
 		synchronized (savedNewsEntityUrlSet) {
@@ -100,6 +101,11 @@ public class TaskScheduleManager {
 		todoTaskPojoList.addAll(todoAddTaskList);
 	}
 
+	// 判断todoTaskPojoList是否为空
+	public static boolean isNull4TodoTaskPojoList() {
+		return todoTaskPojoList.isEmpty();
+	}
+
 	// 从todoTaskPojoList中删除一个集合
 	public static void removeUrlTaskPojoList(
 			List<UrlTaskPojo> todoRemoveTaskList) {
@@ -145,12 +151,12 @@ public class TaskScheduleManager {
 	}
 
 	// 清空userNameList
-	public static void cleanUserNameList() {
+	public static synchronized void cleanUserNameList() {
 		userNameList.clear();
 	}
 
 	// 添加一个账号到userNameList
-	public static void addUserNameList(String userName) {
+	public static synchronized void addUserNameList(String userName) {
 		userNameList.add(userName);
 	}
 
@@ -165,12 +171,12 @@ public class TaskScheduleManager {
 	}
 
 	// 清空proxyIpPoolList
-	public static void cleanProxyIpPoolList() {
+	public static synchronized void cleanProxyIpPoolList() {
 		proxyIpPoolList.clear();
 	}
 
 	// 添加一个账号到proxyIpPoolList
-	public static void addProxyIpPoolList(String userName) {
+	public static synchronized void addProxyIpPoolList(String userName) {
 		proxyIpPoolList.add(userName);
 	}
 

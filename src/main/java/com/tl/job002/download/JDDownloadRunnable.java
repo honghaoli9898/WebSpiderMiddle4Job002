@@ -77,7 +77,14 @@ public class JDDownloadRunnable implements Runnable {
 					}
 				} else {
 					// 如果htmlSource==null,代表下载出错了
-					logger.error(this.name + "下载出错,该任务为=" + taskPojo.getUrl());
+					logger.error(this.name + "所有下载方法已尝试完毕,该任务为=" + taskPojo.getUrl());
+					TaskScheduleManager.addDoneUrlPojo(taskPojo);
+					try {
+						logger.info("-----------即将休息2个小时-----------");
+						Thread.sleep(7200000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			} else {
 				logger.info(this.name + "没有带采集的任务,线程将睡眠"

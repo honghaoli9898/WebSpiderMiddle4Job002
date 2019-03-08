@@ -1,8 +1,10 @@
 package com.tl.job002.utils;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -81,27 +83,26 @@ public class WebDriverUtil {
 			throw new Exception("配置错误，没有配置：chrome path");
 		}
 		service = new ChromeDriverService.Builder()
-				.usingDriverExecutable(
-						new File("plugins\\chromedriver\\chromedriver.exe"))
-				.usingAnyFreePort().build();
+				.usingDriverExecutable(new File(path)).usingAnyFreePort()
+				.build();
 		try {
 			service.start();
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		DesiredCapabilities cap = new DesiredCapabilities();
 		if (SystemConfigParas.is_setting_proxy.equals("true")
-				|| isUseProxy == true) {
+				&& isUseProxy == true) {
 			if (TaskScheduleManager.isNull4ProxyIpPoolList()
-					|| TaskScheduleManager.getTodoTaskSize() == SystemConfigParas.proxy_ip_pool
+					|| TaskScheduleManager.getProxyIpPoolListSize() == SystemConfigParas.proxy_ip_pool
 							.size()) {
 				locationNum = 0;
 				TaskScheduleManager.cleanProxyIpPoolList();
-				;
 			}
 			String proxy = SystemConfigParas.proxy_ip_pool.get(locationNum);
 			logger.info("正在切换代理ip:" + proxy);
 			setProxy(cap, proxy);
+			TaskScheduleManager.addProxyIpPoolList(proxy);
 			locationNum++;
 		}
 		setLog(cap);
@@ -109,11 +110,18 @@ public class WebDriverUtil {
 		setOptionsArguments(SystemConfigParas.options_arguments, options);
 		// options.addArguments("--proxy-server=http://116.209.56.169:9999");
 		cap.setCapability(ChromeOptions.CAPABILITY, options);
+		if (SystemConfigParas.is_setting_image.equals("false")) {
+			Map<String, Object> prefs = new HashMap<String, Object>();
+			prefs.put("profile.managed_default_content_settings.images", 2);
+			options.setExperimentalOption("prefs", prefs);
+		}
 
 		System.getProperties().setProperty("webdriver.chrome.driver", path);
 		WebDriver webDriver = new ChromeDriver(cap);
+		webDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 		webDriver.manage().timeouts().pageLoadTimeout(1200, TimeUnit.SECONDS);
 		webDriver.manage().window().setSize(new Dimension(1920, 1080));
+
 		return webDriver;
 	}
 

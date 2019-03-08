@@ -61,6 +61,8 @@ public class SystemConfigParas {
 	// 是否设置代理
 	public static String is_setting_proxy = configUtil
 			.getValue("is_setting_proxy");
+	//是否加载图片
+	public static String is_setting_image = configUtil.getValue("is_setting_image");
 	// 爬取多少页
 	public static int download_page_num = Integer.parseInt(configUtil
 			.getValue("download_page_num"));

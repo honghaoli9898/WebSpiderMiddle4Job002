@@ -1,13 +1,17 @@
 package JDTest;
 
-import com.tl.job002.utils.WebDriverUtil;
-import com.tl.job002.utils.WebPageDownloadUtil4ChromeDriver;
 
 public class Test {
 
 	public static void main(String[] args) {
-		WebPageDownloadUtil4ChromeDriver downloadInterface = new WebPageDownloadUtil4ChromeDriver();
-		downloadInterface.setWebDriver(WebDriverUtil.createWebDriver(false));
-		downloadInterface.download("http://www.baidu.com");
+		String s ="1";
+		int i =0;
+		while(s.equals("1")){
+			System.out.println(i++);
+			if("2".equals("2")){
+				break;
+			}
+		}
+		System.out.println("循环结束");
 	}
 }
